@@ -8,26 +8,23 @@
 
 int cantidad_restante_hamburguesas = CANTIDAD_INICIAL_HAMBURGUESAS;
 int turno = 0;
-int esperando[NUMBER_OF_THREADS] = {0};
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void *comer_hamburguesa(void *tid) {
     int thread_id = *((int *)tid);
     
     while (1) {
-        esperando[thread_id] = 1;
-        turno = 1 - thread_id; 
-        esperando[thread_id] = 0;
-        
-        while (esperando[1 - thread_id] && turno == 1 - thread_id) {
-        }
-        
-        if (cantidad_restante_hamburguesas > 0) {
+        pthread_mutex_lock(&mutex);
+        if (cantidad_restante_hamburguesas > 0 && turno == thread_id) {
             printf("Hola! soy el hilo(comensal) %d, me voy a comer una hamburguesa! Todavía quedan %d\n", thread_id, cantidad_restante_hamburguesas);
             cantidad_restante_hamburguesas--;
-        } else {
+            turno = 1 - thread_id; // Cambia el turno al otro hilo
+        } else if (cantidad_restante_hamburguesas <= 0) {
             printf("SE TERMINARON LAS HAMBURGUESAS :(\n");
+            pthread_mutex_unlock(&mutex);
             pthread_exit(NULL);
         }
+        pthread_mutex_unlock(&mutex);
     }
 }
 
