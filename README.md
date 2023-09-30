@@ -20,7 +20,7 @@ void *comer_hamburguesa(void *tid) {
         if (cantidad_restante_hamburguesas > 0 && turno == thread_id) {
             printf("Hola! soy el hilo(comensal) %d, me voy a comer una hamburguesa! Todavía quedan %d\n", thread_id, cantidad_restante_hamburguesas);
             cantidad_restante_hamburguesas--;
-            turno = 1 - thread_id; // Cambia el turno al otro hilo
+            turno = 1 - thread_id
         } else if (cantidad_restante_hamburguesas <= 0) {
             printf("SE TERMINARON LAS HAMBURGUESAS :(\n");
             pthread_mutex_unlock(&mutex);
